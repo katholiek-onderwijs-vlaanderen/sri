@@ -23,60 +23,55 @@ An SRI interface should be uniform. It should, in other words, be designed witho
 ## Representation of resources
 We make a distinction between *list* resources and *regular* resources. *List* resources represent queries, and contain an array with many result objects. *Regular* resources correspond to single resources in a system.
 
-All resources should be represented in [JSON documents][json-rfc]. 
+All resources are be represented as [JSON documents][json-rfc]. 
 
-URLs in resources must always be relative. By relative we mean the URL does not include protocol, host nor port. It *should* include a full path. By convention all resources are exposed on a URL /{type}/{uuid}. I.e. schools are available on /schools/{uuid}, school locations on /schoollocations/{uuid}, personal information is available on /persons/{uuid}. Lists of resources are exposed on /{type}. I.e. /schools, /persons, /schoollocations.
+URLs in resources must always be relative. By relative we mean the URL does not include protocol, host nor port. It *should* include a full path. For example a school is available on `/schools/{uuid}`, a mammal on `/mammals/{uuid}`, a person on `/persons/{uuid}`. A *list* of schools on `/schools`, a list of persons on `/persons`.
 
 ### Regular Resources
-All *regular* resource should be available on a permalink. Permalinks are of the format /{type}/{uuid}. Server implementations are encouraged to also implement more human readable URLs (aliases). Links between the resources should always use permalinks.
+All *regular* resource MUST available on a *permalink*. *Permalinks* are of the format `/{type}/{uuid}`. Server implementations are RECOMMENDED to implement more human readable URLs (aliases). A person is OPTIONALLY also available on `/persons/john.doe`. Links between the resources MUST always use *permalinks*. Aliases MUST only provided for convenience during development.
 
-Splitting the resources should also consider security constraints. Security should be applied per URL, so the API must be designed to split resources according to security boundaries. For example a person’s public information is a separate resources from his private information. That private information may be split into 1 or more separate resources to support detailed access control
+When defining the resources in an SRI API, a designer should also consider security constraints. Security MUST be applied per URL, so the API MUST split resources along security boundaries. For example a person’s public information is a separate resources from his private information.
 
-Links between the resources should be navigated by the clients as much as possible. This means a client should use as little knowledge as possible about the specific API. Clients should strive to use the “Hypermedia as the Engine of Application State” principle as much as possible. 
+Clients are advised to strive to use the [“Hypermedia as the Engine of Application State”][hateoas] principle as much as possible. 
 
-Clients are allowed to store the permalinks, however. These URLs are marked in the interface definition with a clear tag permalink (in it’s $$meta section). The server guarantees, in other words, to support these URLs over a long period of time. 
+Clients can safely store *permalinks*. The server MUST, in other words, support these URLs over a long period of time. 
 
-Examples of such permalink resources would be people, customers, organisations, etc.. Notice that these should be very stable concepts.
+The `expand` parameter can be used on *regular* resources to perform inlining of referenced resources. The client can specify dot-separated paths (relative to the JSON document), that need to be included. The server MUST define which paths are supported for expansion. The server is RECOMMENDED to support a consistent schema for expansion, such as all direct references in a resource. All references to other resources MSUT embedded in a JSON object, with a key `href`. When executing expansion the server MUST add an extra key `$$expanded` to that object, including the full *regular* resource that was expanded.
 
-The expand parameter can be used on regular resources to perform inlining of referenced resources. The client can specify dot-separated paths, that need to be included. It is up to the server implementation to chose which paths are supported for expansion.
+Arrays in the JSON responses SHOULD BE named in plural nouns. i.e. schools, rather than school for an array of JSON objects about schools. 
 
-All references to other resources should be embedded in a JSON object. When expanded that object gets an extra key $$expanded, including the full regular resource that was expanded.
+Keys in the JSON responses SHOULD BE camelCasedLikeThis. Acronyms SHOULD NOT be in all capitals. For example the ZIP code is not implemented as ZIPcode, but rather zipCode.
 
-Arrays in the JSON responses should be named in plural nouns. i.e. schools, rather than school for an array of JSON objects about schools. 
+For *regular* resources all JSON objects in the document, including the root object, MUST expose `key` that contains a UUID to uniquely identify separate sections in the JSON document. For the root object this key MUST correspond to the UUID section of the *permalink*. This also applies to arrays of objects within the document.
 
-Keys in the JSON responses should be camelCasedLikeThis. Acronyms should not be in all capitals. For example the ZIP code is not implemented as ZIPcode, but rather zipCode.
+A regular resource should include a `$$meta` section. Such a section MUST include :
 
-For regular resources all JSON objects (in the hierarchy) should expose a key property that contains a UUID to uniquely identify separate sections in the JSON document. This key serves to allow easy mapping to Key/Value datastores and relational databases. This also applies to arrays within the document.
+- a permalink to itself, under `permalink`.
+- a link to the json schema of this resource, under `schema`
 
-A regular resource should include in it’s $$meta section:
-a permalink to itself.
-a type of document.
-a link to the docs for this resource.
-a link to the json schema of this resource.
-an array of supported aliases for this resource.
+It MAY also include an array of supported aliases for this resource, under `aliases`.
 
-Example
+Example (notice the `expand` URL parameter to include a related resource):
 
-GET http://api.vsko.be/schools/006613?expand=schoolLocations
-{
-  $$meta: {
-    permalink: ‘/schools/{UUID}’,
-    docs: ‘/schools/docs’
-    type: ‘school’
-    aliases: [‘/schools/006613’]
-  }
-  institutionNumber : “006613”
-  .. ..
-  schoolLocation : {
-    href: ‘/schoollocations/{uuid},
-    $$expanded: {
-      $meta: {
-        permalink: ‘/schoollocations/{uuid}’,
-        expansion: ‘SUMMARY’
-      }
-      .. a selection of key’s from the full schoollocation ..
+  GET http://api.vsko.be/schools/006613?expand=schoolLocations
+  {
+    $$meta: {
+      permalink: ‘/schools/{UUID}’,
+      schema: '/schools/schema',
+      aliases: [‘/schools/006613’]
     }
-}
+    institutionNumber : “006613”
+    .. ..
+    schoolLocation : {
+      href: ‘/schoollocations/{uuid},
+      $$expanded: {
+        $meta: {
+          permalink: ‘/schoollocations/{uuid}’,
+          expansion: ‘SUMMARY’
+        }
+        .. a selection of key’s from the full schoollocation ..
+      }
+  }
 
 The API implementation are strongly advised to implement GZIP compression.
 
@@ -455,3 +450,4 @@ Implementations can expose various algorithms as a POST operation. The input and
 [roa-book]: http://www.crummy.com/writing/RESTful-Web-Services/
 [roy-fielding]: http://www.w3.org/TR/webarch/#information-resource
 [json-rfc]: http://tools.ietf.org/html/rfc7159
+[hateoas]: http://en.wikipedia.org/wiki/HATEOAS
