@@ -1,7 +1,7 @@
 # Standardized ROA Interface Specification
 
 ## Introduction
-This specification describes a set of requirements for implementing RESTful interfaces. An interface that adheres to this specification qualifies as SRI interfaces. In short SRI defines a number of things about a RESTful interface :
+This specification describes a set of requirements for implementing RESTful interfaces. An interface that adheres to this specification qualifies as an SRI interface. In short SRI defines a number of things about a RESTful interface :
 
 - The api must support regular and list resources
 - The api uses keys and permalinks in a certain way
