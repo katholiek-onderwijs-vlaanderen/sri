@@ -1,20 +1,5 @@
 # Standardized ROA Interface Specification
 
-Introduction
-Motivation
-Representation of resources
-Regular Resources
-List resources
-Usage of keys
-Resource validation
-Resource creation
-Errors
-Resource modification
-Resource removal
-Batch operations
-Security
-Algorithms
-
 ## Introduction
 This document describes a set of additional requirements for implementing Resource Oriented Architecture. An interface that adheres to this specification qualifies as SRI interfaces. In short SRI defines a number of things about a ROA interface :
 
@@ -28,25 +13,17 @@ This document describes a set of additional requirements for implementing Resour
 
 A more general description of Resource Oriented Architecture can be found in the O’Reilly book [“RESTful Web Services”][roa-book] by Leonard Richardson & Sam Ruby. We advise the reader to at least skim through this book as a primer on RESTful interfaces.
 
+RESTful web services follow the general architecture used to build the world wide web. This architectural style is described in [Roy Fielding’s dissertation][roy-fielding].
 
-
-RESTful web services follow the general architecture used to build the world wide web. This architectural style is described in Roy Fielding’s dissertation here :
-
-http://www.w3.org/TR/webarch/#information-resource
-
-Motivation
+## Motivation
 One of the major goals of any software architecture, be it at application- or system-level, is to achieve modularity. A system’s components should, to a certain degree, be separated and easy to recombine into new functionality.
 
-The SRI interfaces should be uniform (and easy to reuse). They should, in other words, be designed without a specific use case, or client, in mind. They define specific restrictions on how the applications can integrate with each other. (Restriction makes great design)
+An SRI interface should be uniform. It should, in other words, be designed without a specific use case, or client application in mind. It defines specific restrictions on how applications/modules can integrate with each other. 
 
+## Representation of resources
+We make a distinction between *list* resources and *regular* resources. *List* resources represent queries, and contain an array with many result objects. Regular resources correspond to single resources in a system.
 
-
-Representation of resources
-This section provides guidelines on how the resources should be represented.
-
-We make a distinction between list resources and regular resources. List resource represent queries, and contain an array with many result objects. Regular resources correspond to single resources in a system.
-
-All resources should be represented in JSON documents. 
+All resources should be represented in [JSON documents][json-rfc]. 
 
 URLs in resources must always be relative. By relative we mean the URL does not include protocol, host nor port. By convention all resources are exposed on a URL /{type}/{uuid}. I.e. schools are available on /schools/{uuid}, school locations on /schoollocations/{uuid}, personal information is available on /persons/{uuid}. Lists of resources are exposed on /{type}. I.e. /schools, /persons, /schoollocations.
 
@@ -478,3 +455,5 @@ Algorithms
 Implementations can expose various algorithms as a POST operation. The input and output of such an algorithm call should be JSON documents. Besides this the implementation can choose the content of those documents.
 
 [roa-book]: http://www.crummy.com/writing/RESTful-Web-Services/
+[roy-fielding]: http://www.w3.org/TR/webarch/#information-resource
+[json-rfc]: http://tools.ietf.org/html/rfc7159
