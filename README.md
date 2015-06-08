@@ -1,7 +1,7 @@
 # Standardized ROA Interface Specification
 
 ## Introduction
-This document describes a set of additional requirements for implementing Resource Oriented Architecture. An interface that adheres to this specification qualifies as SRI interfaces. In short SRI defines a number of things about a ROA interface :
+This specification describes a set of requirements for implementing RESTful interfaces. An interface that adheres to this specification qualifies as SRI interfaces. In short SRI defines a number of things about a *resource oriented architecture* interface :
 
 - The api must support regular and list resources
 - The api uses keys and permalinks in a certain way
@@ -11,7 +11,7 @@ This document describes a set of additional requirements for implementing Resour
 - All regular resources have a JSON schema associated
 - etc...
 
-A more general description of Resource Oriented Architecture can be found in the O’Reilly book [“RESTful Web Services”][roa-book] by Leonard Richardson & Sam Ruby. We advise the reader to at least skim through this book as a primer on RESTful interfaces.
+A more general description of *resource oriented architecture* can be found in the O’Reilly book [“RESTful Web Services”][roa-book] by Leonard Richardson & Sam Ruby. We advise the reader to at least skim through this book as a primer on RESTful interfaces.
 
 RESTful web services follow the general architecture used to build the world wide web. This architectural style is described in [Roy Fielding’s dissertation][roy-fielding].
 
