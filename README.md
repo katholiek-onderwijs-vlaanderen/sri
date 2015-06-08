@@ -50,25 +50,25 @@ Server implementations MAY choose to add extra keys to the `$$meta` section.
 
 Example (notice the `expand` URL parameter to include a related resource):
 
-  GET http://api.vsko.be/schools/006613?expand=schoolLocations
-  {
-    $$meta: {
-      permalink: ‘/schools/{UUID}’,
-      schema: '/schools/schema',
-      aliases: [‘/schools/006613’]
-    }
-    institutionNumber : “006613”
-    ...
-    director : {
-      href: ‘/persons/{uuid},
-      $$expanded: {
-        $meta: {
-          permalink: ‘/persons/{uuid}’,
+    GET http://api.vsko.be/schools/006613?expand=schoolLocations
+    {
+      $$meta: {
+        permalink: ‘/schools/{UUID}’,
+        schema: '/schools/schema',
+        aliases: [‘/schools/006613’]
+      }
+      institutionNumber : “006613”
+      ...
+      director : {
+        href: ‘/persons/{uuid},
+        $$expanded: {
+          $meta: {
+            permalink: ‘/persons/{uuid}’,
+          }
+          ...
         }
-        ...
       }
     }
-  }
 
 Timestamps MUST use the format defined in [RFC 3339, section 5.6][format-timestamps].
 Emails MUST support [RFC 5322, section 3.4.1][format-emails].
@@ -82,16 +82,16 @@ Constants SHOULD BE included in capitals, they should be clear terms that at lea
 ### List resources
 A *list* resource contains a set of references to *regular* resources. When requesting a *list* resource references to all items of a certain type are returned, by default. The references are returned in an array under key `results`. Inside the `results` array objects appear with an `href` that contains the *permalink* to a regular resource.
 
-  GET /persons
-  200 OK
-  {
-    $$meta: { ... }
-    results: [
-      { href: '/persons/{guid1}' },
-      { href: '/persons/{guid2}' },
-      ...
-    ]
-  }
+    GET /persons
+    200 OK
+    {
+      $$meta: { ... }
+      results: [
+        { href: '/persons/{guid1}' },
+        { href: '/persons/{guid2}' },
+        ...
+      ]
+    }
 
 *List* resources MUST provides paging through, and servers MUST impose a maximum number of items that will be returned on a single GET operation.
 
@@ -99,36 +99,36 @@ A *list* resource contains a set of references to *regular* resources. When requ
 
 *List* resources support URL parameter `expand` for *expanding* a resource. *Expansion* makes a *list* resource include the related *regular* resources in `results[x].$$expanded`. The `expand` parameter MUST accept dot-separated paths, relative to the response object. To include the regular resources from the `results` array :
 
-  GET /customers?expand=results.href
-  200 OK
-  {
-    $$meta: {
-      count: 25263,
-      next: "/customers?offset=30&limit=30"
-    },
-    results: [
-      {
-        href: "/customers/8eb525d8-302c-4fef-a0c9-5deae86590a5”,
-        $$expanded: {
-          $$meta: {
-            permalink: "/customers/8eb525d8-302c-4fef-a0c9-5deae86590a5”,
-            expansion: “FULL”,
-            type: “user”
-          },
-          firstName: ‘John’,
-          lastName: ‘Doe’,
-          … a selection of data from this person ...
+    GET /customers?expand=results.href
+    200 OK
+    {
+      $$meta: {
+        count: 25263,
+        next: "/customers?offset=30&limit=30"
+      },
+      results: [
+        {
+          href: "/customers/8eb525d8-302c-4fef-a0c9-5deae86590a5”,
+          $$expanded: {
+            $$meta: {
+              permalink: "/customers/8eb525d8-302c-4fef-a0c9-5deae86590a5”,
+              expansion: “FULL”,
+              type: “user”
+            },
+            firstName: ‘John’,
+            lastName: ‘Doe’,
+            … a selection of data from this person ...
+          }
         }
-      }
-      … 29 more results …
-    ]
-  }
+        … 29 more results …
+      ]
+    }
   
 Servers MAY also allow expansion of more levels :
 
-  GET /persons?expand=results.href.father
-  200 OK
-  { ... }
+    GET /persons?expand=results.href.father
+    200 OK
+    { ... }
 
 *List* resource MUST be found on the base URL of the corresponding *regular* resources. If a school can be found at `/schools/{guid}`, then a list of references of all schools can be queried on `/schools`.
 
@@ -147,7 +147,7 @@ Keywords search. Implementations of list resources are advised to implement a br
 
 Such a generic ‘keywords-search’ should be implemented by using this convention : The name of the parameter should be q. The value of the parameter can have multiple keywords, separated by a plus (+) sign. Examples : 
 
-  http://api.vsko.be/persons?q=John+Doe
+    GET /persons?q=John+Doe
 
 Searching through this `q` parameter should by definition be a broad search. So at least case-insensitive matches on sub-strings should be supported. Typically this list resource will be used to provide auto-completion in a user interface, so speed is very important. Implementations should consider fuzzy matching to overcome typing mistakes by end users.
 
@@ -160,14 +160,7 @@ The values next and previous should point to a valid list resource for the next 
 ## Usage of keys
 In the very least a UUID value should be available to identify a resource in the system in a reliable way. Every resource can be accessed on a resource that contains this basic UUID. All UUID’s should be represented in the same way: {8 characters}-{4 characters}-{4 characters}-{4 characters}-{12 characters}. All characters are lowercase. 
 
-  /schools/393f8347-8420-11e3-b29a-0c84dce06e32
-
-If more universally accepted / more human readable keys are available (e.g. institution number for a school is also used by many parties outside the own organisation or the login of a person), that can result in an resource alias. In such a case the resource is available on more than one URL. Aliases are intended for developers only. Programs should use permalinks.
-
-A person resource could be made available on http://api.vsko.be/people/{UUID} and at the same time on `/people/firstname.lastname`. A school could be made available on http://api.vsko.be/schools/001644 (institution number).
-
-/schools/001566
-/persons/john.doe
+    GET /schools/393f8347-8420-11e3-b29a-0c84dce06e32
 
 ## Resource validation
 In order to allow clients to reuse all or some of the validation logic implemented on the server, the APIs will expose their validation algorithm for every resource type. As we are not exposing resources here, but rather an algorithm we will use the POST verb for this. The URL on which we expose this algorithm is a sub-URL /validate of your list resources. 
@@ -194,7 +187,7 @@ The code of an error/warning should always be in lowercase, and words should be 
 To make sure the same code is used for the same errors across all the API’s we define the following codes. Make sure the paths property indicates to which property/list the error code applies:
 
 - `property.missing` : when a required property is missing in the document.
-‘property.value.invalid’: when the value for a property is not valid. A more specific message is better, this is the default fallback.
+- ‘property.value.invalid’: when the value for a property is not valid. A more specific message is better, this is the default fallback.
 ‘property.type.invalid’: when the type of the property is not as expected by the schema.
 ‘property.value.too.long’: when the input value is too long.
 ‘property.value.too.short’: when the input value is too short.
@@ -208,59 +201,8 @@ Every error/warning should have a type field that has value ‘ERROR’ or ‘WA
 
 Example : creation of a new school via PUT. A school with institution number 006122 is already in the datastore.
 
-  PUT /school/{UUID-1}
-  {
-    key : {UUID-1}
-    institutionNumber: "006122",
-    seatAddresses: [
-      {
-        key : {UUID-2}
-        street: "Haantjeslei",
-        houseNumber: "50-52",
-        zipCode: "2018xyz",
-        city: "Antwerpen",
-        subCity: "Antwerpen"
-      }
-    ],
-    details: [
-      {
-        key : {UUID-3}
-        startDate: “1940-09-01”,
-        endDate: “2011-08-31”,
-        name: "Ges. Vrije Basisschool (Gemengd)",
-        shortName: "Ges. Vrije Basisschool (Gemengd)",
-        callName: " Sint-Ludgardis Belpaire",
-        affiliation: "VSKO",
-        inclination: "Confessioneel katholiek",
-        schoolNet: "Gesubsidieerd vrij onderwijs"
-      },
-    educationLevel: "BASIS",
-    educationSort: "GEWOON",
-    … …
-  }
-
-  409 Conflict
-  {
-    errors : [
-      {
-        code : “duplicate.institutionnumber”,
-        paths : [“institutionNumber”]
-        type : “ERROR”
-        .. the API can add extra keys to this error object to provide more context if desired ...
-      },
-      {
-        code : “zip.code.invalid”,
-        paths : [“seatAddress.zipCode”]
-        type : “ERROR”
-        .. the API can add extra keys to this error object to provide more context if desired ...
-      },
-      {
-        code : “invalid.xyz”,
-        type : “ERROR”
-        .. the API can add extra keys to this error object to provide more context if desired ...
-      }
-    ],
-    document : {
+    PUT /school/{UUID-1}
+    {
       key : {UUID-1}
       institutionNumber: "006122",
       seatAddresses: [
@@ -287,9 +229,60 @@ Example : creation of a new school via PUT. A school with institution number 006
         },
       educationLevel: "BASIS",
       educationSort: "GEWOON",
-      … …
+      ...
     }
-  }
+
+    409 Conflict
+    {
+      errors : [
+        {
+          code : “duplicate.institutionnumber”,
+          paths : [“institutionNumber”]
+          type : “ERROR”
+          .. the API can add extra keys to this error object to provide more context if desired ...
+        },
+        {
+          code : “zip.code.invalid”,
+          paths : [“seatAddress.zipCode”]
+          type : “ERROR”
+          .. the API can add extra keys to this error object to provide more context if desired ...
+        },
+        {
+          code : “invalid.xyz”,
+          type : “ERROR”
+          .. the API can add extra keys to this error object to provide more context if desired ...
+        }
+      ],
+      document : {
+        key : {UUID-1}
+        institutionNumber: "006122",
+        seatAddresses: [
+          {
+            key : {UUID-2}
+            street: "Haantjeslei",
+            houseNumber: "50-52",
+            zipCode: "2018xyz",
+            city: "Antwerpen",
+            subCity: "Antwerpen"
+          }
+        ],
+        details: [
+          {
+            key : {UUID-3}
+            startDate: “1940-09-01”,
+            endDate: “2011-08-31”,
+            name: "Ges. Vrije Basisschool (Gemengd)",
+            shortName: "Ges. Vrije Basisschool (Gemengd)",
+            callName: " Sint-Ludgardis Belpaire",
+            affiliation: "VSKO",
+            inclination: "Confessioneel katholiek",
+            schoolNet: "Gesubsidieerd vrij onderwijs"
+          },
+        educationLevel: "BASIS",
+        educationSort: "GEWOON",
+        ...
+      }
+    }
 
 All possible errors should be exposed on your server implementation on /{type}/errors.
 The format of this resource is an array of objects describing the errors and warnings :
@@ -300,23 +293,23 @@ code : The programmatic code that will be returned, clients can use this string 
 Optional : extra keys that clarify the error further. For example : paths
 
 Example :
-  GET /persons/errors
-  200 OK
-  [
-   {
-    message: “There is an existent resource that overlaps with the one you are trying to create.”,
-    type: “ERROR”,
-    code: “overlapping.period”,
-    status : 409
-    .. potentially extra properties ...
-   },
-   {
-    .. more error messages/warnings ...
-   }
-  ]
+
+    GET /persons/errors
+    200 OK
+    [
+     {
+      message: “There is an existent resource that overlaps with the one you are trying to create.”,
+      type: “ERROR”,
+      code: “overlapping.period”,
+      status : 409
+      .. potentially extra properties ...
+     },
+     {
+      .. more error messages/warnings ...
+     }
+    ]
 
 ## Resource modification
-
 HTTP PUT is the only supported way to update resources. If resources are stored in a representation close to the API form (think document stores like MongoDB/CouchDB), the most convenient implementation style would be to execute all relevant validation rules, and execute a document update on the datastore (after minor modification).
 
 Most of our datastores are relational databases, however. Therefore, the previous section defined  that every level of a document should contain a key, to allow convenient mapping. These values are also handy in case of key-value stores.
@@ -342,7 +335,7 @@ Deleted resources are still available with GET operation, if the client specifie
 
 The deleted parameter, in other words, includes deleted resource when resolving GET operations. (on both regular, and list resources)
 
-The deleted=true parameter is only intended for debugging, and should not be use by any regular client application.
+The `deleted=true` parameter is only intended for debugging, and should not be use by any regular client application.
 
 ## Batch operations
 In order to allow batch update/create (for performance), and to allow atomic update/create of multiple resources (for consistency), APIs can implement batch operations if they choose so.
@@ -353,47 +346,47 @@ To make the APIs consistent the URL of a batch operation must end in /batch.
 
 The request body of a batch operation is a composition of other operations on resources :
 
-  [
-    {
-     “href” : “/schools/{uuid-generated-by-client}”,
-     “verb” : “PUT”,
-     “body” : {
-      … Identical JSON structure as for a regular PUT operation’s body …
-     }
-    },
-    {
-     “href” : “schoollocations/{uuid-generated-by-client”,
-     “verb” : “PUT”,
-     “body” : {
-      … Identical JSON structure as for a regular PUT operation’s body …
-     }
-    },
-    // If you want to delete in a batch, this should be marked *explicitly* :
-    {
-     “href” : “/otherschoolresource/{uuid}”,
-     “verb” : “DELETE”
-     // body can be omitted for deletes.
-    }
-  ]
+    [
+      {
+       “href” : “/schools/{uuid-generated-by-client}”,
+       “verb” : “PUT”,
+       “body” : {
+        … Identical JSON structure as for a regular PUT operation’s body …
+       }
+      },
+      {
+       “href” : “schoollocations/{uuid-generated-by-client”,
+       “verb” : “PUT”,
+       “body” : {
+        … Identical JSON structure as for a regular PUT operation’s body …
+       }
+      },
+      // If you want to delete in a batch, this should be marked *explicitly* :
+      {
+       “href” : “/otherschoolresource/{uuid}”,
+       “verb” : “DELETE”
+       // body can be omitted for deletes.
+      }
+    ]
 
 If “verb” is omitted, it must be interpreted as PUT. It is advised to specify it explicitly.
 
 The response body matches this same composition, and returns the http status and body (if any) the regular PUT/DELETE/GET/.. operations would return.
 
-  [
-   {
-    “href” : “/schools/{uuid-generated-by-client}”,
-    “status” : 200 /* the http status that would be given for this resource in a regular PUT */
-    /* “body” is ommited here, if the server normally does not return any response body for 200 OK */
-   },
-   {
-    “href” : “/schoollocations/{uuid-generated-by-client}”,
-    “status” : 409,
-    “body” : {
-     /* The same response object that a regular PUT would return for an error situation */
-    }
-   }
-  ]
+    [
+     {
+      “href” : “/schools/{uuid-generated-by-client}”,
+      “status” : 200 /* the http status that would be given for this resource in a regular PUT */
+      /* “body” is ommited here, if the server normally does not return any response body for 200 OK */
+     },
+     {
+      “href” : “/schoollocations/{uuid-generated-by-client}”,
+      “status” : 409,
+      “body” : {
+       /* The same response object that a regular PUT would return for an error situation */
+      }
+     }
+    ]
 
 ## Security
 APIs can be called in 3 kinds of security context. An api can be called publicly (no known security context). It may be called on behalf of a certain user. Or it may be called in behalf of some technical system.
