@@ -3,12 +3,13 @@
 ## Introduction
 This specification describes a set of requirements for implementing RESTful interfaces. An interface that adheres to this specification qualifies as an SRI interface. In short SRI defines a number of things about a RESTful interface :
 
-- The api must support regular and list resources
-- The api uses keys and permalinks in a certain way
-- The api exposes meta-information
-- List resource all support a set of common URL query parameters
-- Batch operations are supported to to enforce atomic updates/creates of multiple resources
-- All regular resources have a JSON schema associated
+- The api must support regular resources.
+- The api must expose a sensible set of queries on resource as list resources.
+- The api uses keys and permalinks in a certain way.
+- The api exposes meta-information.
+- List resource all support a set of common URL query parameters.
+- Batch operations are supported to to enforce atomic updates/creates of multiple resources.
+- Regular resources have a JSON schema associated.
 - etc...
 
 RESTful web services follow the general architecture used to build the world wide web. This architectural style is described in [Roy Fielding’s dissertation][roy-fielding].
@@ -45,9 +46,10 @@ For *regular* resources all JSON objects in the document, including the root obj
 A regular resource should include a `$$meta` section. Such a section MUST include :
 
 - a permalink to itself, under `permalink`.
-- a link to the json schema of this resource, under `schema`
+- a link to the json schema of this resource, under `schema`.
 
 It MAY also include an array of supported aliases for this resource, under `aliases`.
+Server implementations MAY choose to add extra keys to the `$$meta` section.
 
 Example (notice the `expand` URL parameter to include a related resource):
 
@@ -59,53 +61,28 @@ Example (notice the `expand` URL parameter to include a related resource):
       aliases: [‘/schools/006613’]
     }
     institutionNumber : “006613”
-    .. ..
-    schoolLocation : {
-      href: ‘/schoollocations/{uuid},
+    ...
+    director : {
+      href: ‘/persons/{uuid},
       $$expanded: {
         $meta: {
-          permalink: ‘/schoollocations/{uuid}’,
-          expansion: ‘SUMMARY’
+          permalink: ‘/persons/{uuid}’,
         }
-        .. a selection of key’s from the full schoollocation ..
+        ...
       }
+    }
   }
 
-The API implementation are strongly advised to implement GZIP compression.
+Timestamps MUST use the format defined in [RFC 3339, section 5.6][format-timestamps].
+Emails MUST support [RFC 5322, section 3.4.1][format-emails].
+URLs MUST be formatted according to [RFC3986][format-urls].
+Country codes MUST adhere to [ISO-3166-1][format-countrycodes].
 
-Responses should specify caching headers (Via HTTP headers). Both HTTP 1.1 header Cache-Control and HTTP 1.0 Last-Modified should be used to specify a sensible caching policy. It is perfectly valid to have resources that are not cacheable. In that case you should pay extra attention to the performance of your implementation, and specify no-store for Cache-Control.
+Every *regular* resource MUST have a JSON schema definition. This schema should be exposed on `/{resource name}/schema`.
 
-Server responses for individual resources should remain smaller than 10 kilobyte (after compression), to ensure quick responsiveness in the user interface. This will require some large resource to be split into smaller resource (both resources should link to each other, as described by the connectedness principle of REST).
+Constants SHOULD BE included in capitals, they should be clear terms that at least facilitate debugging / exploring the API.
 
-Server responses for list resources should remain smaller than 100 kilobyte (after compression). 
-
-As the interfaces must be designed to support a wide variety of use-cases, they must not be designed with a specific client in mind. Therefore if resources A contains links to resource B, and the relationship makes sense to be queries in both directions, resource B should also link to resource A. Any update to one side of the relation will be reflected in the other side after a reasonable time period where all cached version are updated.
-
-Time-date fields, URLs, address information, email, etc.. should be standardized across all API implementations as much as possible.
-
-Date, time, email and URLs should follow the "format" definitions of json schema validation
-(http://json-schema.org/latest/json-schema-validation.html):
-Time-date fields: RFC 3339, section 5.6 (http://tools.ietf.org/html/rfc3339#section-5.6)
-email: RFC 5322, section 3.4.1 (http://tools.ietf.org/html/rfc5322#section-3.4.1)
-URLs: RFC3986 (http://tools.ietf.org/html/rfc3986)
-
-Country codes should adhere to this widely used ISO standard : http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-
-All resources should be served with both HTTP headers ETag and Expires to allow for conditional gets (Expires can be set to 0, to disable caching on HTTP 1.0 proxies).
-
-Every regular resource should have a JSON schema definition. This schema should be exposed as /{resource name}/schema.
-
-Keys in the resources should be primarily in English (unless a term can not be translated properly from the native language).
-
-Constants should be included in English (and capitals), they should be clear terms that at least facilitate debugging / exploring the API. Clients should translate the constant value in their view for display to the end user.
-
-And last, but not least: extra care should be given to make sure you implementations are efficient, handling requests quickly.
-
-List resources should respond within 100 ms. Regular resources should respond within 10 ms.
-
-A resource should include a $$meta section for adding meta-information about the resource. Examples of meta-information for a list resource would be the link to the next page, the total number of rows, etc.. For a regular resource the $$meta section must include a permalink.
-
-List resources
+### List resources
 Every sensible data-access path on a resource is exposed on a specific URL. The result of requesting such a (query) URL is a list resource.
 
 List resources can be filtered through the use of URL parameters.
@@ -449,3 +426,7 @@ Implementations can expose various algorithms as a POST operation. The input and
 [roy-fielding]: http://www.w3.org/TR/webarch/#information-resource
 [json-rfc]: http://tools.ietf.org/html/rfc7159
 [hateoas]: http://en.wikipedia.org/wiki/HATEOAS
+[format-timestamps]: http://tools.ietf.org/html/rfc3339#section-5.6
+[format-countrycodes]: http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+[format-urls]: http://tools.ietf.org/html/rfc3986
+[format-emails]: http://tools.ietf.org/html/rfc5322#section-3.4.1
