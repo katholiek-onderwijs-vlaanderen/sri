@@ -21,16 +21,14 @@ One of the major goals of any software architecture, be it at application- or sy
 An SRI interface should be uniform. It should, in other words, be designed without a specific use case, or client application in mind. It defines specific restrictions on how applications/modules can integrate with each other. 
 
 ## Representation of resources
-We make a distinction between *list* resources and *regular* resources. *List* resources represent queries, and contain an array with many result objects. Regular resources correspond to single resources in a system.
+We make a distinction between *list* resources and *regular* resources. *List* resources represent queries, and contain an array with many result objects. *Regular* resources correspond to single resources in a system.
 
 All resources should be represented in [JSON documents][json-rfc]. 
 
-URLs in resources must always be relative. By relative we mean the URL does not include protocol, host nor port. By convention all resources are exposed on a URL /{type}/{uuid}. I.e. schools are available on /schools/{uuid}, school locations on /schoollocations/{uuid}, personal information is available on /persons/{uuid}. Lists of resources are exposed on /{type}. I.e. /schools, /persons, /schoollocations.
+URLs in resources must always be relative. By relative we mean the URL does not include protocol, host nor port. It *should* include a full path. By convention all resources are exposed on a URL /{type}/{uuid}. I.e. schools are available on /schools/{uuid}, school locations on /schoollocations/{uuid}, personal information is available on /persons/{uuid}. Lists of resources are exposed on /{type}. I.e. /schools, /persons, /schoollocations.
 
-Regular Resources
-Information that has a strict hierarchical relationship should be represented in a single resource, up to a reasonable level. On the other hand resources should not become huge. It is the API designer’s choice to split the problem domain into manageable resources. Splitting into resources, on the other hand, should not be inspired by the backing storage technology (i.e. a resource per relational database table).
-
-All regular resource (non-list) should be available on a technical URL that includes it’s UUID (All resources have a unique UUID). Such a link is called a permalink. Server implementations are encouraged to also implement more human readable URLs (aliases). Links between the resources of your own API should use the technical URLs (permalink). Links to other applications should also be stored as UUID-based URLS.
+### Regular Resources
+All *regular* resource should be available on a permalink. Permalinks are of the format /{type}/{uuid}. Server implementations are encouraged to also implement more human readable URLs (aliases). Links between the resources should always use permalinks.
 
 Splitting the resources should also consider security constraints. Security should be applied per URL, so the API must be designed to split resources according to security boundaries. For example a person’s public information is a separate resources from his private information. That private information may be split into 1 or more separate resources to support detailed access control
 
