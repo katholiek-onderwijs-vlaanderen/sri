@@ -70,8 +70,8 @@ Example (notice the `expand` URL parameter to include a related resource):
       }
     }
 
-Timestamps MUST use the format defined in [RFC 3339, section 5.6][format-timestamps].
-Emails MUST support [RFC 5322, section 3.4.1][format-emails].
+Timestamps MUST be formatted according to [RFC 3339, section 5.6][format-timestamps].
+Emails MUST be formatted according to [RFC 5322, section 3.4.1][format-emails].
 URLs MUST be formatted according to [RFC3986][format-urls].
 Country codes MUST adhere to [ISO-3166-1][format-countrycodes].
 
@@ -134,31 +134,29 @@ Servers MAY also allow expansion of more levels :
 
 *List* resource must all support the following standard URL parameters by default :
 
-- `modifiedSince` : A field that allows the user to implement a publish-subscribe style. Periodically an application can poll such a list resource, to determine which resources were changed since it last asked the service. Allowing for local replication of some, or all of the information in the resource. 
-- `orderBy` : A user can use this to order the result list. For which values the API supports ordering, is up to the API designer.
-descending : Specifies that the orderBy parameter should sort descending, if it’s value is true. (i.e.: descending=false means ascending, descending=true means descending, a missing descending parameter means ascending.
-- `offset` : Used for paging. Specifies which result-row should be returned in the response as first element. If missing, 0 is assumed.
-- `limit` : Used for paging. Specifies a maximum number of results to return. If not specified the more general guideline of responses < 100Kb (after compression) should be respected. In other words, an implicit limit value should be part of the implementation. (To prevent a single request from affecting the web and/or database/datastore). Clients must support paging.
-- `hrefs` : comma separated list of resources to retrieve (permalinks). Allows for easy cross-referencing between backends. For example, one could retrieve a list of person keys by querying /responsibilities, and allow retrieval of all /persons resources with expansion=href. This can be combined with other query parameters, to support cross-backend joining.
+- `modifiedSince` : Limits `results` to references to resources that were created or modified since the given timestamp. 
+- `orderBy` : Orders `results`. Servers can determine what possible ordering they support. By default the sort order is ascending.
+- `descending` : Specifies that the `orderBy` parameter should sort descending, if it’s value is true.
+- `offset` : Used for paging. The server MUST skip the first n references from the result set.
+- `limit` : Used for paging. Specifies a maximum number of results to return. The server is RECOMMENDED to have a default value for `limit`, that limits the maximum transfer size of the response.
+- `hrefs` : A comma separated list of permalinks. The server MUST limit the results to these items.
 
-Other URL parameters are used to filter on a specific value. The API designer must not try to cover all possible cases, but rather a sensible and broad set of filters and orderings. As noted above all sensible data-access paths should be available as list resources.
+All URL parameters can be combined, where the filtering is combined in an `AND` fashion.
 
-Keywords search. Implementations of list resources are advised to implement a broad, general query mechanism that selects resources based on any strong identifying property. WIth “strong identifying property” we mean any property of the resource that restricts the result list significantly. For example, when searching for a person, the name of the person is strongly identifying (not uniquely identifying, though). Of course, any unique value is strongly identifying as well, such as login, primary email address, national identity number, etc.. But also the city of his home or office address is significantly filtering the results (although less than the previous properties).
+The server is RECOMMENDED to support a number of sensible extra URL parameters. 
 
-Such a generic ‘keywords-search’ should be implemented by using this convention : The name of the parameter should be q. The value of the parameter can have multiple keywords, separated by a plus (+) sign. Examples : 
+A server MAY choose to support full-text search. If it does so it should implement this as URL parameter `q`. In case multiple search terms are submitted to the server they MUST be separated by a plus (+) sign.
 
     GET /persons?q=John+Doe
 
-Searching through this `q` parameter should by definition be a broad search. So at least case-insensitive matches on sub-strings should be supported. Typically this list resource will be used to provide auto-completion in a user interface, so speed is very important. Implementations should consider fuzzy matching to overcome typing mistakes by end users.
+List resources must contain a `$$meta` section. This `$$meta` section MUST contain these keys :
 
-The resulting resource should be a JSON object, containing under the key ‘results’, an array of JSON objects, a `$$meta` section with next, previous and count values. The objects in the response array (it should always be an object) should contain a value ‘href’ to point to a resource found in the system.
-
-As stated above, the list resource must restrict the length of the list, even if there was no limit parameter, nor any filter parameters supplied. Avoiding server overload for certain (non-restricting) requests.
-
-The values next and previous should point to a valid list resource for the next or previous page. If no next, or previous page is available, the value should be omitted. Examples :
+- `count` : indicates the total number of references that match with the supplied URL parameters.
+- `next` : If more references are available for the specified URL paramter, and the `limit` has been applied to this *list* resource, `next` must contain a relative link to the *list* resource that contains the next page. Otherwise it SHOULD be omitted.
+- `previous` : If the client specified an `offset` that is larger than `limit`, then `previous`. Otherwise is SHOULD be omitted.
 
 ## Usage of keys
-In the very least a UUID value should be available to identify a resource in the system in a reliable way. Every resource can be accessed on a resource that contains this basic UUID. All UUID’s should be represented in the same way: {8 characters}-{4 characters}-{4 characters}-{4 characters}-{12 characters}. All characters are lowercase. 
+Every *regular* resources MUST have a UUID value to identify it in the system in a reliable, stable way. This UUID MAY NEVER change over the lifetime of the resource. All UUID’s should be represented in the same way: {8 characters}-{4 characters}-{4 characters}-{4 characters}-{12 characters}, including hyphens. All characters MUST be lowercase.
 
     GET /schools/393f8347-8420-11e3-b29a-0c84dce06e32
 
