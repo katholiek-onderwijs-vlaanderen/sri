@@ -145,6 +145,8 @@ All URL parameters can be combined, where the filtering is combined in an `AND` 
 
 The server is RECOMMENDED to support a number of sensible extra URL parameters. 
 
+The server MUST process all URL parameters case-insensitive.
+
 A server MAY choose to support full-text search. If it does so it should implement this as URL parameter `q`. In case multiple search terms are submitted to the server they MUST be separated by a plus (+) sign.
 
     GET /persons?q=John+Doe
