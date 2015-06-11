@@ -19,7 +19,7 @@ We make a distinction between *list* resources and *regular* resources. *List* r
 All resources are represented as [JSON documents][json-rfc]. 
 
 ### Regular Resources
-All *regular* resource MUST available on a *permalink*. *Permalinks* are of the format `/{type}/{uuid}`. Server implementations are RECOMMENDED to implement more human readable URLs (aliases). A person is OPTIONALLY also available on `/persons/john.doe`. Links between the resources MUST always use *permalinks*. Aliases MUST only provided for convenience during development.
+All *regular* resource MUST be available on a *permalink*. *Permalinks* are of the format `/{type}/{uuid}`. Server implementations are RECOMMENDED to implement more human readable URLs (aliases). A person is OPTIONALLY also available on `/persons/john.doe`. Links between the resources MUST always use *permalinks*. Aliases MUST only be provided for convenience during development.
 
 *Regular* resources SHOULD be exposed on a URL that uses a plural form for it's *type* section. (i.e. `/schools/{guid}` and not `/school/{guid}`)
 
@@ -29,11 +29,11 @@ Clients are advised to strive to use the [“Hypermedia as the Engine of Applica
 
 Clients can safely store *permalinks*. The server MUST, in other words, support these URLs over a long period of time. 
 
-The `expand` parameter can be used on *regular* resources to perform inlining of referenced resources. The client can specify dot-separated paths (relative to the JSON document), that need to be included. The server MUST define which paths are supported for expansion. The server is RECOMMENDED to support a consistent schema for expansion, such as all direct references in a resource. All references to other resources MSUT embedded in a JSON object, with a key `href`. When executing expansion the server MUST add an extra key `$$expanded` to that object, including the full *regular* resource that was expanded.
+The `expand` parameter can be used on *regular* resources to perform inlining of referenced resources. The client can specify one or more dot-separated paths (relative to the JSON document), that need to be included. Multiple expansions SHOULD be requested by separating them with a comma. The server MUST define which paths are supported for expansion. The server is RECOMMENDED to support a consistent schema for expansion, such as all direct references in a resource. All references to other resources MUST be embedded in a JSON object, with a key `href`. When executing expansion the server MUST add an extra key `$$expanded` to that object, including the full *regular* resource that was expanded.
 
-Arrays in the JSON responses SHOULD BE named in plural nouns. i.e. schools, rather than school for an array of JSON objects about schools. 
+Arrays in *regular* resources SHOULD BE named in plural nouns. i.e. schools, rather than school for an array of JSON objects about schools. 
 
-Keys in the JSON responses SHOULD BE camelCasedLikeThis. Acronyms SHOULD NOT be in all capitals. For example the ZIP code is not implemented as ZIPcode, but rather zipCode.
+Keys in the JSON responses SHOULD BE camelCasedLikeThis. Acronyms SHOULD NOT be in all capitals. For example ZIP code is not implemented as ZIPcode, but rather zipCode.
 
 For *regular* resources all JSON objects in the document, including the root object, MUST expose `key` that contains a UUID to uniquely identify separate sections in the JSON document. For the root object this key MUST correspond to the UUID section of the *permalink*. This also applies to arrays of objects within the document.
 
