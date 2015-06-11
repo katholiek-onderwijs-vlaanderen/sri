@@ -16,7 +16,7 @@ RESTful web services follow the general architecture used to build the world wid
 ## Representation of resources
 We make a distinction between *list* resources and *regular* resources. *List* resources represent queries, and contain an array with many result objects. *Regular* resources correspond to single resources in a system.
 
-All resources are be represented as [JSON documents][json-rfc]. 
+All resources are represented as [JSON documents][json-rfc]. 
 
 URLs in resources must always be relative. By relative we mean the URL does not include protocol, host nor port. It *should* include a full path. For example a school is available on `/schools/{uuid}`, a mammal on `/mammals/{uuid}`, a person on `/persons/{uuid}`. A *list* of schools on `/schools`, a list of persons on `/persons`.
 
