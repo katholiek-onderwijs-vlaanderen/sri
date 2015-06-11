@@ -18,8 +18,6 @@ We make a distinction between *list* resources and *regular* resources. *List* r
 
 All resources are represented as [JSON documents][json-rfc]. 
 
-URLs in resources must always be relative. By relative we mean the URL does not include protocol, host nor port. It *should* include a full path. For example a school is available on `/schools/{uuid}`, a mammal on `/mammals/{uuid}`, a person on `/persons/{uuid}`. A *list* of schools on `/schools`, a list of persons on `/persons`.
-
 ### Regular Resources
 All *regular* resource MUST available on a *permalink*. *Permalinks* are of the format `/{type}/{uuid}`. Server implementations are RECOMMENDED to implement more human readable URLs (aliases). A person is OPTIONALLY also available on `/persons/john.doe`. Links between the resources MUST always use *permalinks*. Aliases MUST only provided for convenience during development.
 
