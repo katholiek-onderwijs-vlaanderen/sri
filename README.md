@@ -90,11 +90,11 @@ A *list* resource contains a set of references to *regular* resources. When requ
       ]
     }
 
-*List* resources MUST provides paging through, and servers MUST impose a maximum number of items that will be returned on a single GET operation.
+*List* resources MUST support paging, and servers MUST impose a maximum number of items that will be returned on a single GET operation (i.e. servers MUST enforce paging if more than a reasonable number of items is requested).
 
-*List* resources can be *filtered* through the use of URL parameters. All parameter names and parameter values should be camelCasedLikeThis, but the resource names should be lower cased. If the parameter name or the value is not recognized by the server or not valid for this resource a developer-friendly error message SHOULD be returned with HTTP status code `404 Not Found`.
+*List* resources can be *filtered* through the use of URL parameters. All parameter names and parameter values MUST be camelCasedLikeThis, but the resource names MUST be in lower case. If the parameter name or the value is not recognized by the server or not valid for this *list* resource, the server MUST return with HTTP status code `404 Not Found`. The server MUST return a error message in the response body (see below for errors). 
 
-*List* resources support URL parameter `expand` for *expanding* a resource. *Expansion* makes a *list* resource include the related *regular* resources in `results[x].$$expanded`. The `expand` parameter MUST accept dot-separated paths, relative to the response object. To include the regular resources from the `results` array :
+*List* resources support URL parameter `expand` for *expanding* a resource. *Expansion* makes a *list* resource include the related *regular* resources in `results[x].$$expanded`. The `expand` parameter MUST accept one or more dot-separated paths, relative to the response object. If more than one property paths is specified they MUST be seperated with a comma. To include the regular resources from the `results` array :
 
     GET /customers?expand=results.href
     200 OK
@@ -121,11 +121,28 @@ A *list* resource contains a set of references to *regular* resources. When requ
       ]
     }
   
-Servers MAY also allow expansion of more levels :
+Servers MAY also allow expansion of more information. For example the *regular* resource in the *list* resource could have a reference to a different *regular* resource :
 
     GET /persons?expand=results.href.father
     200 OK
-    { ... }
+    { 
+        $$meta: { ... },
+        results: [
+            {
+                href: '/persons/{guidA}',
+                $$expanded: {
+                    ...
+                    father: {
+                        href: '/persons/{guidB}',
+                        $$expanded: {
+                            ...
+                        }
+                    }
+                    ...
+                }
+            }
+        ]
+    }
 
 *List* resource MUST be found on the base URL of the corresponding *regular* resources. If a school can be found at `/schools/{guid}`, then a list of references of all schools can be queried on `/schools`.
 
