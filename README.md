@@ -177,7 +177,7 @@ Every *regular* resources MUST have a UUID value to identify it in the system in
     GET /schools/393f8347-8420-11e3-b29a-0c84dce06e32
 
 ## Resource validation
-In order to allow clients to reuse all or some of the validation logic implemented on the server, the server MUST expose their validation algorithm for every resource type. Clients can perform a `POST` operation to `/{type}/validate`. If `/schools` is a list resource, `/schools/{uuid}` is an regular school resource, and the validation algorithm for checking a single school resource will be exposed on `/schools/validate`.
+In order to allow clients to reuse all or some of the validation logic implemented on the server, the server MUST expose their validation algorithm for every resource type. Clients can perform a `POST` operation to `/{type}/validate`. If `/schools` is a list resource, `/schools/{uuid}` is an regular school resource, and the validation algorithm for checking a single school resource will be exposed on `/schools/validate`. The response of the validation is almost identical to a `PUT` operation with the same resource (`200 OK`, or `409 Conflict`), except that the operation has no side-effect (i.e. the resource is not updated). Additionally this resource validation algorithm can return non-blocking warnings, rather than only blocking errors (as is the case for a PUT operation).
 
     POST /schools/{guid}
     {
@@ -188,37 +188,31 @@ In order to allow clients to reuse all or some of the validation logic implement
     
     200 OK
 
-The response to this POST operation will return the same body as described in Error Codes. 
-
-Additionally this resource validation algorithm can return non-blocking warnings, rather than only blocking errors (as is the case for a PUT operation).
+The response to this POST operation will return the same body as described in section about error codes. 
 
 ## Resource creation
-When a new resource is created, this should be done via an HTTP PUT operation. If the resource is created the server should return :
-An HTTP 200 (OK)
+When a new resource is created, this should be done via an `PUT` operation. If the resource is created the server SHOULD return `200 OK`. If the resource could not be created, the response should be an `409 Conflict`. The entity of the response should contain a JSON document describing the reason creation was refused. See the section on error messages for more details on the format of errors.
 
-If the resource could not be created, the response should be an HTTP 409 (Conflict). The entity of the response should contain a JSON document describing the reason creation was refused. This would typically be because of business logic validation. (See below for more details on the format of errors)
-
-The client must generate a UUID based URL for the PUT operation.
+The client MUST generate a UUID based URL for the PUT operation.
 
 ## Errors
-Errors must be returned in the HTTP response body.  The response must contain a set of error objects. Each error object should contain a code and an path - if possible - that points to where the error occured in the document. In order to make life easier in asynchronous languages such as javascript, the server also returns the original JSON document in the response.
+Errors must be returned in the HTTP response body.  The response must contain a set of error objects. Each error object SHOULD contain a `code` and, optionally a `path` that points to where the error occured in the document (as a dot-separated property path, relative to the JSON document). The server MUST also return the original JSON document in the response, under `document`.
 
-The code of an error/warning should always be in lowercase, and words should be separated by dots, as shown in the example.
+The `code` of an error/warning should always be in lower case, and words should be separated by dots.
 
-To make sure the same code is used for the same errors across all the API’s we define the following codes. Make sure the paths property indicates to which property/list the error code applies:
+Some error codes are standardized. Servers MUST use these standard error appropriately.
 
-- `property.missing` : when a required property is missing in the document.
-- ‘property.value.invalid’: when the value for a property is not valid. A more specific message is better, this is the default fallback.
-‘property.type.invalid’: when the type of the property is not as expected by the schema.
-‘property.value.too.long’: when the input value is too long.
-‘property.value.too.short’: when the input value is too short.
-‘property.list.empty’: occurs when an list is empty that is not allowed to be.
-‘enddate.before.startdate’: when a period is entered with an enddate before the startdate.
-‘duplicate.key’: when the resource contains two objects with the same key.
-‘key.not.unique’: when the resource contains a new object with a key that is not unique.
-‘invalid.permalink’: when the document contains a link is a reference to a non-existing resource. A non-existing URL would resolve as 404 or 410. It is not required, but advised that API implementations check links in documents.
+- `property.missing` MUST be used when a required property is missing in the document.
+- `property.value.invalid` MUST be used when the value for a property is not valid.
+- `property.type.invalid` MUST be used when the type of the property is not as expected by the schema. 
+- `property.value.too.long` MUST be used when the input value exceeds the maximum size.
+- `property.value.too.short` MUST be used when the input value is too short.
+- `property.list.empty` MUST be used when an list is empty, when it is not allowed to be.
+- `duplicate.key` MUST be used when the resource contains two objects with the same key.
+- `key.not.unique` MUST be used when the resource contains a new object with a key that is not unique.
+- `invalid.permalink` MAY be used when the document contains a link to a non-existing resource.
 
-Every error/warning should have a type field that has value ‘ERROR’ or ‘WARNING’, as shown in the example.
+Every warning SHOULD have a `type` field that has value `WARNING`. Error messages MAY contain a `type` field with value `ERROR`.
 
 Example : creation of a new school via PUT. A school with institution number 006122 is already in the datastore.
 
@@ -305,13 +299,15 @@ Example : creation of a new school via PUT. A school with institution number 006
       }
     }
 
-All possible errors should be exposed on your server implementation on /{type}/errors.
-The format of this resource is an array of objects describing the errors and warnings :
-message : A description of what went wrong, to help the developer. Human readable.
-type : ERROR or WARNING.
-status : The http status code returned for this type of error or warning.
-code : The programmatic code that will be returned, clients can use this string to match the error.
-Optional : extra keys that clarify the error further. For example : paths
+All possible errors should be exposed on your server implementation on `/{type}/errors`.
+The format of this resource is an array of objects describing the errors and warnings. The objects have these keys :
+
+- `code` : The programmatic code that will be returned, clients can use this string to match the error.
+- `type` : ERROR or WARNING.
+- `status` : The http status code returned for this type of error or warning.
+- `message` : A description of what went wrong, to help the developer. Human readable.
+
+Extra keys that clarify the error further MAY be added by the server.
 
 Example :
 
@@ -319,10 +315,10 @@ Example :
     200 OK
     [
      {
-      message: “There is an existent resource that overlaps with the one you are trying to create.”,
-      type: “ERROR”,
       code: “overlapping.period”,
-      status : 409
+      type: “ERROR”,
+      status : 409,
+      message: “There is an existent resource that overlaps with the one you are trying to create.”
       .. potentially extra properties ...
      },
      {
@@ -331,41 +327,25 @@ Example :
     ]
 
 ## Resource modification
-HTTP PUT is the only supported way to update resources. If resources are stored in a representation close to the API form (think document stores like MongoDB/CouchDB), the most convenient implementation style would be to execute all relevant validation rules, and execute a document update on the datastore (after minor modification).
-
-Most of our datastores are relational databases, however. Therefore, the previous section defined  that every level of a document should contain a key, to allow convenient mapping. These values are also handy in case of key-value stores.
-
-The update cycle involves getting the resource as JSON, modifying some of the content, and executing an http PUT operation to the original URL.
-
-The server should respond, if everything went well with an HTTP 200 (OK).
-
-If a technical error is encountered (parsing, etc..) the server should respond with an HTTP 400 (Bad Request).
-
-If a business (validation) error is encountered, the server should respond with an HTTP 403 (Forbidden), with the same type of entity as described above for resource creation.
+A `PUT` is the only supported operation to update resources. The server MUST respond `200 OK` if the update was succesful. If a technical error is encountered (parsing, etc..) the server SHOULD respond with an `400 Bad Request`. If a validation error is encountered, the server should respond with an `409 Conflict`, with the same type of entity as described for resource creation.
 
 ## Resource removal
-Resources may be deactivated by executing an HTTP DELETE method on the corresponding URL. Internally the applications should not remove the information from the database/datastore, but rather mark the data as deleted. This is to prevent information loss.
+A server SHOULD deactivate a resource when receiving a `DELETE` operation on the corresponding URL. Internally the server SHOULD NOT remove the information, but rather mark the data as deleted. The server SHOULD implement an archiving strategy. This is beyond the scope of this document.
 
-When the operation succeeds the server should respond with an HTTP 200 (OK).
+When the operation succeeds the server SHOULD respond with an `200 OK`.
 
-When the server was unable to execute the request, it should send an HTTP 403 (Forbidden), within the entity a JSON document describing the reason the operation failed. The format of this document is identical as described above for resource creation.
+When the server was unable to execute the request, it SHOULD send `409 Conflict`. The response body must be of the same format as described in the errors section.
 
-When a client subsequently tries to DELETE, GET (unless deleted=true, see below) or PUT a resource that was already deleted, the server must respond with HTTP 410 (Gone).
+When a client subsequently tries to DELETE, GET (unless he is using URL parameter `deleted=true`, see below) or PUT a resource, the server MUST respond with `410 Gone`.
 
-Deleted resources are still available with GET operation, if the client specifies deleted=true as an URL parameter. They do not appear in any list resources and cannot be GET as regular resources, unless the client specified deleted=true as an URL parameter. 
-
-The deleted parameter, in other words, includes deleted resource when resolving GET operations. (on both regular, and list resources)
-
-The `deleted=true` parameter is only intended for debugging, and should not be use by any regular client application.
+If the client specifies `deleted=true` as an URL parameter (when requesting either a *regular* resource, or a *list* resource), the resource SHOULD be returned as if it was not deleted. A deleted resource MUST include, on the top level `deleted` with value `true`.
 
 ## Batch operations
-In order to allow batch update/create (for performance), and to allow atomic update/create of multiple resources (for consistency), APIs can implement batch operations if they choose so.
+In order to allow multiple operations to happen in an atomic way servers MUST implement a `/batch` endpoint.
 
-Batch operations are always atomic. This is to say, the creation/updates of the resources in the batch are all applied, or all discarded. A single error causes the entire batch operation to fail.
+Batch operations are always atomic. This is to say, the operations (creation/updates/deletes) of the resources in the batch are all applied, or all discarded. A single error MUST cause the entire batch operation to fail.
 
-To make the APIs consistent the URL of a batch operation must end in /batch.
-
-The request body of a batch operation is a composition of other operations on resources :
+The request body of a batch operation is a composition of other operations on resources as such :
 
     [
       {
@@ -390,34 +370,26 @@ The request body of a batch operation is a composition of other operations on re
       }
     ]
 
-If “verb” is omitted, it must be interpreted as PUT. It is advised to specify it explicitly.
+If `verb` is omitted, it MUST be interpreted as PUT.
 
-The response body matches this same composition, and returns the http status and body (if any) the regular PUT/DELETE/GET/.. operations would return.
+The response body matches this same composition, and returns the http status and body (if any) the regular operations would return. A client MAY combine all types of operations (GET/PUT/POST/DELETE) in a single batch operation.
 
     [
      {
       “href” : “/schools/{uuid-generated-by-client}”,
-      “status” : 200 /* the http status that would be given for this resource in a regular PUT */
-      /* “body” is ommited here, if the server normally does not return any response body for 200 OK */
+      “status” : 200
      },
      {
       “href” : “/schoollocations/{uuid-generated-by-client}”,
       “status” : 409,
       “body” : {
-       /* The same response object that a regular PUT would return for an error situation */
+       ...
       }
      }
     ]
 
-## Security
-APIs can be called in 3 kinds of security context. An api can be called publicly (no known security context). It may be called on behalf of a certain user. Or it may be called in behalf of some technical system.
-
-When called on behalf of a person, OAuth authentication is required.
-
-When calling on behalf of a technical system/process, BASIC authentication should be used.
-
 ## Algorithms
-Implementations can expose various algorithms as a POST operation. The input and output of such an algorithm call should be JSON documents. Besides this the implementation can choose the content of those documents.
+Implementations can expose various algorithms as a POST operation. The input and output of such an algorithm call SHOULD be JSON documents. Besides this the server can choose the content of those documents.
 
 [roa-book]: http://www.crummy.com/writing/RESTful-Web-Services/
 [roy-fielding]: http://www.w3.org/TR/webarch/#information-resource
