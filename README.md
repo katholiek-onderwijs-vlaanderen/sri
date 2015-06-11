@@ -3,13 +3,12 @@
 ## Introduction
 This specification describes a set of requirements for implementing RESTful interfaces. An interface that adheres to this specification qualifies as an SRI interface. In short SRI defines a number of things about a RESTful interface :
 
-- The api must support regular resources.
-- The api must expose a sensible set of queries on resource as list resources.
+- The api must support *regular* resources.
+- The api must expose a sensible set of queries on *regular* resources as *list* resources.
 - The api uses keys and permalinks in a certain way.
-- The api exposes meta-information.
-- List resource all support a set of common URL query parameters.
+- *List* resource all support a set of common URL query parameters, pagination, ordering, expansion, etc..
 - Batch operations are supported to to enforce atomic updates/creates of multiple resources.
-- Regular resources have a JSON schema associated.
+- All resource types must have a JSON schema associated.
 - etc...
 
 RESTful web services follow the general architecture used to build the world wide web. This architectural style is described in [Roy Fielding’s dissertation][roy-fielding].
