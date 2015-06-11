@@ -70,7 +70,7 @@ Example (notice the `expand` URL parameter to include a related resource):
 Timestamps MUST be formatted according to [RFC 3339, section 5.6][format-timestamps].
 Emails MUST be formatted according to [RFC 5322, section 3.4.1][format-emails].
 URLs MUST be formatted according to [RFC3986][format-urls].
-Country codes MUST adhere to [ISO-3166-1][format-countrycodes].
+Country codes MUST adhere to [ISO-3166-1 alpha-2][format-countrycodes].
 
 Every *regular* resource MUST have a JSON schema definition. This schema should be exposed on `/{resource name}/schema`.
 
