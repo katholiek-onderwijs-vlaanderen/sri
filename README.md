@@ -47,7 +47,7 @@ Server implementations MAY choose to add extra keys to the `$$meta` section.
 
 Example (notice the `expand` URL parameter to include a related resource):
 
-    GET http://api.vsko.be/schools/006613?expand=schoolLocations
+    GET http://api.mine.org/schools/006613?expand=director
     {
       $$meta: {
         permalink: ‘/schools/{UUID}’,
