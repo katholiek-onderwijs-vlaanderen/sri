@@ -19,7 +19,9 @@ We make a distinction between *list* resources and *regular* resources. *List* r
 All resources are represented as [JSON documents][json-rfc]. 
 
 ### Regular Resources
-All *regular* resource MUST be available on a *permalink*. *Permalinks* are of the format `/{type}/{uuid}`. Server implementations are RECOMMENDED to implement more human readable URLs (aliases). A person is OPTIONALLY also available on `/persons/john.doe`. Links between the resources MUST always use *permalinks*. Aliases MUST only be provided for convenience during development.
+All *regular* resource MUST be available on a *permalink*. *Permalinks* are of the format `/{type}/{uuid}`. Server implementations are RECOMMENDED to implement more human readable URLs (aliases). A person is OPTIONALLY also available on `/persons/john.doe`. Links between the resources MUST always use *permalinks*. 
+
+(Aliases are only be provided for convenience during development. Clients should not rely on them, store them, or use them in any other way. Server implementations are not required to keep these aliases stable, or even available.)
 
 *Regular* resources SHOULD be exposed on a URL that uses a plural form for it's *type* section. (i.e. `/schools/{guid}` and not `/school/{guid}`)
 
