@@ -74,7 +74,7 @@ Emails MUST be formatted according to [RFC 5322, section 3.4.1][format-emails].
 URLs MUST be formatted according to [RFC3986][format-urls].
 Country codes MUST adhere to [ISO-3166-1 alpha-2][format-countrycodes].
 
-Every *regular* resource MUST have a JSON schema definition. This schema should be exposed on `/{resource name}/schema`.
+Every *regular* resource MUST have a JSON schema definition. This schema should be exposed on `/{type}/schema`.
 
 Constants SHOULD BE included in capitals, they should be clear terms that at least facilitate debugging / exploring the API.
 
