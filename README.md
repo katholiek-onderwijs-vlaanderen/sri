@@ -49,18 +49,20 @@ Example (notice the `expand` URL parameter to include a related resource):
 
     GET http://api.mine.org/schools/006613?expand=director
     {
-      $$meta: {
-        permalink: ‘/schools/{UUID}’,
-        schema: '/schools/schema',
-        aliases: [‘/schools/006613’]
+      "$$meta": {
+        "permalink": "/schools/{UUID}",
+        "schema": "/schools/schema",
+        "aliases": ["/schools/006613"]
       }
-      institutionNumber : “006613”
+      "institutionNumber" : “006613”
       ...
-      director : {
-        href: ‘/persons/{uuid},
-        $$expanded: {
-          $meta: {
-            permalink: ‘/persons/{uuid}’,
+      "director" : {
+        "href": "/persons/{uuid}",
+        "$$expanded": {
+          "$$meta": {
+            "permalink": "/persons/{uuid}",
+            "schema": "/persons/schema",
+            ...
           }
           ...
         }
@@ -82,10 +84,10 @@ A *list* resource contains a set of references to *regular* resources. When requ
     GET /persons
     200 OK
     {
-      $$meta: { ... }
-      results: [
-        { href: '/persons/{guid1}' },
-        { href: '/persons/{guid2}' },
+      "$$meta": { ... }
+      "results": [
+        { "href": "/persons/{guid1}" },
+        { "href": "/persons/{guid2}" },
         ...
       ]
     }
@@ -99,25 +101,24 @@ A *list* resource contains a set of references to *regular* resources. When requ
     GET /customers?expand=results.href
     200 OK
     {
-      $$meta: {
-        count: 25263,
-        next: "/customers?offset=30&limit=30"
+      "$$meta": {
+        "count": 25263,
+        "next": "/customers?offset=30&limit=30"
       },
-      results: [
+      "results": [
         {
-          href: "/customers/8eb525d8-302c-4fef-a0c9-5deae86590a5”,
-          $$expanded: {
-            $$meta: {
-              permalink: "/customers/8eb525d8-302c-4fef-a0c9-5deae86590a5”,
-              expansion: “FULL”,
-              type: “user”
+          "href": "/customers/8eb525d8-302c-4fef-a0c9-5deae86590a5”,
+          "$$expanded": {
+            "$$meta": {
+              "permalink": "/customers/8eb525d8-302c-4fef-a0c9-5deae86590a5”,
+              "schema": "/customers/schema"
             },
-            firstName: ‘John’,
-            lastName: ‘Doe’,
+            "firstName": "John",
+            "lastName": "Doe",
             … a selection of data from this person ...
           }
         }
-        … 29 more results …
+        … more results …
       ]
     }
   
@@ -126,15 +127,15 @@ Servers MAY also allow expansion of more information. For example the *regular* 
     GET /persons?expand=results.href.father
     200 OK
     { 
-        $$meta: { ... },
-        results: [
+        "$$meta": { ... },
+        "results": [
             {
-                href: '/persons/{guidA}',
-                $$expanded: {
+                "href": "/persons/{guidA}",
+                "$$expanded": {
                     ...
-                    father: {
-                        href: '/persons/{guidB}',
-                        $$expanded: {
+                    "father": {
+                        "href": "/persons/{guidB}",
+                        "$$expanded": {
                             ...
                         }
                     }
@@ -181,8 +182,8 @@ In order to allow clients to reuse all or some of the validation logic implement
 
     POST /schools/{guid}
     {
-        key: '{guid}',
-        institutionNumber: '128256',
+        "key": "{guid}",
+        "institutionNumber": "128256",
         ...
     }
     
@@ -218,83 +219,69 @@ Example : creation of a new school via PUT. A school with institution number 006
 
     PUT /school/{UUID-1}
     {
-      key : {UUID-1}
-      institutionNumber: "006122",
-      seatAddresses: [
+      "key": "{UUID-1}"
+      "institutionNumber": "006122",
+      "seatAddresses": [
         {
-          key : {UUID-2}
-          street: "Haantjeslei",
-          houseNumber: "50-52",
-          zipCode: "2018xyz",
-          city: "Antwerpen",
-          subCity: "Antwerpen"
+          "key" : "{UUID-2}"
+          "street": "Haantjeslei",
+          "houseNumber": "50-52",
+          "zipCode": "2018xyz",
+          "city": "Antwerpen"
         }
       ],
-      details: [
+      "details": [
         {
-          key : {UUID-3}
-          startDate: “1940-09-01”,
-          endDate: “2011-08-31”,
-          name: "Ges. Vrije Basisschool (Gemengd)",
-          shortName: "Ges. Vrije Basisschool (Gemengd)",
-          callName: " Sint-Ludgardis Belpaire",
-          affiliation: "VSKO",
-          inclination: "Confessioneel katholiek",
-          schoolNet: "Gesubsidieerd vrij onderwijs"
+          "key" : "{UUID-3}"
+          "startDate": “1940-09-01”,
+          "endDate": “2011-08-31”,
+          "name": "Ges. Vrije Basisschool (Gemengd)"
         },
-      educationLevel: "BASIS",
-      educationSort: "GEWOON",
+      "educationLevel": "BASIS",
       ...
     }
 
     409 Conflict
     {
-      errors : [
+      "errors" : [
         {
-          code : “duplicate.institutionnumber”,
-          paths : [“institutionNumber”]
-          type : “ERROR”
+          "code": “duplicate.institutionnumber”,
+          "paths": [“institutionNumber”]
+          "type": “ERROR”
           .. the API can add extra keys to this error object to provide more context if desired ...
         },
         {
-          code : “zip.code.invalid”,
-          paths : [“seatAddress.zipCode”]
-          type : “ERROR”
+          "code": “zip.code.invalid”,
+          "paths": [“seatAddress.zipCode”]
+          "type" : “ERROR”
           .. the API can add extra keys to this error object to provide more context if desired ...
         },
         {
-          code : “invalid.xyz”,
-          type : “ERROR”
+          "code": “invalid.xyz”,
+          "type": “ERROR”
           .. the API can add extra keys to this error object to provide more context if desired ...
         }
       ],
-      document : {
-        key : {UUID-1}
-        institutionNumber: "006122",
-        seatAddresses: [
+      "document" : {
+        "key" : "{UUID-1}",
+        "institutionNumber": "006122",
+        "seatAddresses": [
           {
-            key : {UUID-2}
-            street: "Haantjeslei",
-            houseNumber: "50-52",
-            zipCode: "2018xyz",
-            city: "Antwerpen",
-            subCity: "Antwerpen"
+            "key": "{UUID-2}",
+            "street": "Haantjeslei",
+            "houseNumber": "50-52",
+            "zipCode": "2018xyz",
+            "city": "Antwerpen"
           }
         ],
-        details: [
+        "details": [
           {
-            key : {UUID-3}
-            startDate: “1940-09-01”,
-            endDate: “2011-08-31”,
-            name: "Ges. Vrije Basisschool (Gemengd)",
-            shortName: "Ges. Vrije Basisschool (Gemengd)",
-            callName: " Sint-Ludgardis Belpaire",
-            affiliation: "VSKO",
-            inclination: "Confessioneel katholiek",
-            schoolNet: "Gesubsidieerd vrij onderwijs"
+            "key": "{UUID-3}"
+            "startDate": “1940-09-01”,
+            "endDate": “2011-08-31”,
+            "name": "Ges. Vrije Basisschool (Gemengd)"
           },
-        educationLevel: "BASIS",
-        educationSort: "GEWOON",
+        "educationLevel": "BASIS",
         ...
       }
     }
@@ -315,10 +302,10 @@ Example :
     200 OK
     [
      {
-      code: “overlapping.period”,
-      type: “ERROR”,
-      status : 409,
-      message: “There is an existent resource that overlaps with the one you are trying to create.”
+      "code": “overlapping.period”,
+      "type": “ERROR”,
+      "status": 409,
+      "message": “There is an existent resource that overlaps with the one you are trying to create.”
       .. potentially extra properties ...
      },
      {
@@ -349,23 +336,23 @@ The request body of a batch operation is a composition of other operations on re
 
     [
       {
-       “href” : “/schools/{uuid-generated-by-client}”,
-       “verb” : “PUT”,
-       “body” : {
+       “href”: “/schools/{uuid-generated-by-client}”,
+       “verb”: “PUT”,
+       “body”: {
         … Identical JSON structure as for a regular PUT operation’s body …
        }
       },
       {
-       “href” : “schoollocations/{uuid-generated-by-client”,
-       “verb” : “PUT”,
-       “body” : {
+       “href”: “schoollocations/{uuid-generated-by-client”,
+       “verb”: “PUT”,
+       “body”: {
         … Identical JSON structure as for a regular PUT operation’s body …
        }
       },
       // If you want to delete in a batch, this should be marked *explicitly* :
       {
-       “href” : “/otherschoolresource/{uuid}”,
-       “verb” : “DELETE”
+       “href”: “/otherschoolresource/{uuid}”,
+       “verb”: “DELETE”
        // body can be omitted for deletes.
       }
     ]
@@ -376,13 +363,13 @@ The response body matches this same composition, and returns the http status and
 
     [
      {
-      “href” : “/schools/{uuid-generated-by-client}”,
-      “status” : 200
+      “href”: “/schools/{uuid-generated-by-client}”,
+      “status”: 200
      },
      {
-      “href” : “/schoollocations/{uuid-generated-by-client}”,
-      “status” : 409,
-      “body” : {
+      “href”: “/schoollocations/{uuid-generated-by-client}”,
+      “status”: 409,
+      “body”: {
        ...
       }
      }
