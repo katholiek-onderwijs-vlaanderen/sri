@@ -96,7 +96,7 @@ A *list* resource contains a set of references to *regular* resources. When requ
 
 *List* resources can be *filtered* through the use of URL parameters. All parameter names and parameter values MUST be camelCasedLikeThis, but the resource names MUST be in lower case. If the parameter name or the value is not recognized by the server or not valid for this *list* resource, the server MUST return with HTTP status code `404 Not Found`. The server MUST return a error message in the response body (see below for errors). 
 
-*List* resources support URL parameter `expand` for *expanding* a resource. The `expand` parameter MUST accept one or more dot-separated paths, relative to the response object. If more than one property paths is specified they MUST be seperated with a comma. To include the regular resources from the `results` array :
+*List* resources support URL parameter `expand` for *expanding* a resource. The `expand` parameter MUST accept one or more dot-separated paths, relative to the response object. If more than one property path is specified they MUST be seperated with a comma. To include the regular resources from the `results` array :
 
     GET /customers?expand=results.href
     200 OK
