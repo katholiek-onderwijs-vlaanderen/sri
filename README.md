@@ -177,6 +177,8 @@ Every *regular* resources MUST have a UUID value to identify it in the system in
 
     GET /schools/393f8347-8420-11e3-b29a-0c84dce06e32
 
+The server is RECOMMENDED to store as many as possible, other, widely accepted keys for the resource he is exposing.
+
 ## Resource validation
 In order to allow clients to reuse all or some of the validation logic implemented on the server, the server MUST expose their validation algorithm for every resource type. Clients can perform a `POST` operation to `/{type}/validate`. If `/schools` is a list resource, `/schools/{uuid}` is an regular school resource, and the validation algorithm for checking a single school resource will be exposed on `/schools/validate`. The response of the validation is almost identical to a `PUT` operation with the same resource (`200 OK`, or `409 Conflict`), except that the operation has no side-effect (i.e. the resource is not updated). Additionally this resource validation algorithm can return non-blocking warnings, rather than only blocking errors (as is the case for a PUT operation).
 
