@@ -117,7 +117,7 @@ A *list* resource contains a set of references to *regular* resources. When requ
             "lastName": "Doe",
             … a selection of data from this person ...
           }
-        }
+        },
         … more results …
       ]
     }
