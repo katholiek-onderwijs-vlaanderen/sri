@@ -153,7 +153,7 @@ Servers MAY also allow expansion of more information. For example the *regular* 
 - `orderBy` : Orders `results`. Servers can determine what possible ordering they support. By default the sort order is ascending.
 - `descending` : Specifies that the `orderBy` parameter should sort descending, if it’s value is true.
 - `offset` : Used for paging. The server MUST skip the first n references from the result set.
-- `limit` : Used for paging. Specifies a maximum number of results to return. The server MUST  have a default value for `limit`, that limits the maximum transfer size of the response.
+- `limit` : Used for paging. Specifies a maximum number of results to return. The server MUST  have a maximum value for `limit`. (This limits the maximum transfer size of responses)
 - `hrefs` : A comma separated list of permalinks. The server MUST limit the results to these items.
 
 All URL parameters can be combined, where the filtering is combined in an `AND` fashion.
