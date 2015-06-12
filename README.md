@@ -145,7 +145,7 @@ Servers MAY also allow expansion of more information. For example the *regular* 
         ]
     }
 
-*List* resource MUST be found on the base URL of the corresponding *regular* resources. If a school can be found at `/schools/{guid}`, then a list of references of all schools can be queried on `/schools`.
+*List* resources MUST be found on the base URL of the corresponding *regular* resources. If a school can be found at `/schools/{guid}`, then a list of references of all schools can be queried on `/schools`.
 
 *List* resource must all support the following standard URL parameters by default :
 
