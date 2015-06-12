@@ -25,9 +25,7 @@ All *regular* resource MUST be available on a *permalink*. *Permalinks* are of t
 
 *Regular* resources SHOULD be exposed on a URL that uses a plural form for it's *type* section. (i.e. `/schools/{guid}` and not `/school/{guid}`)
 
-When defining the resources in an SRI API, a designer should also consider security constraints. Security MUST be applied per URL, so the API MUST split resources along security boundaries. For example a person’s public information is a separate resources from his private information.
-
-Clients are advised to strive to use the [“Hypermedia as the Engine of Application State”][hateoas] principle as much as possible. 
+Security MUST be applied per URL, so the server MUST split resources along security boundaries. For example a person’s public information is a separate resources from his private information.
 
 Clients can safely store *permalinks*. The server MUST, in other words, support these URLs over a long period of time. 
 
@@ -392,6 +390,10 @@ The response body matches this same composition, and returns the http status and
 
 ## Algorithms
 Implementations can expose various algorithms as a POST operation. The input and output of such an algorithm call SHOULD be JSON documents. Besides this the server can choose the content of those documents.
+
+## Advice
+
+Clients are advised to strive to use the [“Hypermedia as the Engine of Application State”][hateoas] principle as much as possible.
 
 [roa-book]: http://www.crummy.com/writing/RESTful-Web-Services/
 [roy-fielding]: http://www.w3.org/TR/webarch/#information-resource
