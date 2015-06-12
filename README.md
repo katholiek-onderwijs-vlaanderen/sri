@@ -35,7 +35,7 @@ Arrays in *regular* resources SHOULD BE named in plural nouns. i.e. schools, rat
 
 Keys in the JSON responses SHOULD BE camelCasedLikeThis. Acronyms SHOULD NOT be in all capitals. For example ZIP code is not implemented as ZIPcode, but rather zipCode.
 
-For *regular* resources all JSON objects in the document, including the root object, MUST expose `key` that contains a UUID to uniquely identify separate sections in the JSON document. For the root object this key MUST correspond to the UUID section of the *permalink*. This also applies to arrays of objects within the document.
+For *regular* resources all JSON objects in the document, including the root object, MUST expose `key` that contains a UUID to uniquely identify separate sections in the JSON document. For the root object this key MUST correspond to the UUID section of the *permalink*. (This also applies to arrays of objects within the document)
 
 A regular resource should include a `$$meta` section. Such a section MUST include :
 
