@@ -21,13 +21,13 @@ All resources are represented as [JSON documents][json-rfc].
 ### Regular Resources
 All *regular* resource MUST be available on a *permalink*. *Permalinks* are of the format `/{type}/{uuid}`. Server implementations are RECOMMENDED to implement more human readable URLs (aliases). A person is OPTIONALLY also available on `/persons/john.doe`. Links between the resources MUST always use *permalinks*. 
 
-(Aliases are only be provided for convenience during development. Clients should not rely on them, store them, or use them in any other way. Server implementations are not required to keep these aliases stable, or even available.)
+(Aliases are only be provided for convenience during development. Clients should not rely on them, store them, or use them in any other way. Server implementations are not required to keep these aliases stable, or even available)
 
 *Regular* resources SHOULD be exposed on a URL that uses a plural form for it's *type* section. (i.e. `/schools/{guid}` and not `/school/{guid}`)
 
 Security MUST be applied per URL, so the server MUST split resources along security boundaries. For example a person’s public information is a separate resources from his private information.
 
-Clients can safely store *permalinks*. The server MUST, in other words, support these URLs over a long period of time. 
+The server MUST support *permalinks* over a long period of time. (Clients can safely store *permalinks*)
 
 The `expand` parameter can be used on *regular* resources to perform inlining of referenced resources. The client can specify one or more dot-separated paths (relative to the JSON document), that need to be included. Multiple expansions SHOULD be requested by separating them with a comma. The server MUST define which paths are supported for expansion. The server is RECOMMENDED to support a consistent schema for expansion, such as all direct references in a resource. All references to other resources MUST be embedded in a JSON object, with a key `href`. When executing expansion the server MUST add an extra key `$$expanded` to that object, including the full *regular* resource that was expanded.
 
