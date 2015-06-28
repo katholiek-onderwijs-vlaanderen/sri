@@ -98,7 +98,7 @@ A *list* resource contains a set of references to *regular* resources. When requ
 
 *List* resources support URL parameter `expand` for *expanding* a resource. The `expand` parameter MUST accept one or more dot-separated paths, relative to the response object. If more than one property path is specified they MUST be seperated with a comma. To include the regular resources from the `results` array :
 
-    GET /customers?expand=results.href
+    GET /customers?expand=results
     200 OK
     {
       "$$meta": {
@@ -124,7 +124,7 @@ A *list* resource contains a set of references to *regular* resources. When requ
   
 Servers MAY also allow expansion of more information. For example the *regular* resource in the *list* resource could have a reference to a different *regular* resource :
 
-    GET /persons?expand=results.href.father
+    GET /persons?expand=results.father
     200 OK
     { 
         "$$meta": { ... },
