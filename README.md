@@ -327,7 +327,7 @@ When the server was unable to execute the request, it SHOULD send `409 Conflict`
 
 When a client subsequently tries to DELETE, GET (unless he is using URL parameter `deleted=true`, see below) or PUT a resource, the server MUST respond with `410 Gone`.
 
-If the client specifies `deleted=true` as an URL parameter (when requesting either a *regular* resource, or a *list* resource), the resource SHOULD be returned as if it was not deleted. A deleted resource MUST include, on the top level `deleted` with value `true`.
+If the client specifies `deleted=true` as an URL parameter (when requesting either a *regular* resource, or a *list* resource), the resource SHOULD be returned as if it was not deleted. A deleted resource MUST include, in the `$$meta` section `deleted` with value `true`.
 
 ## Batch operations
 In order to allow multiple operations to happen in an atomic way servers MUST implement a `/batch` endpoint.
