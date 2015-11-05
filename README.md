@@ -194,7 +194,7 @@ In order to allow clients to reuse all or some of the validation logic implement
 The response to this POST operation will return the same body as described in section about error codes. 
 
 ## Resource creation
-When a new resource is created, this should be done via an `PUT` operation. If the resource is created the server SHOULD return `200 OK`. If the resource could not be created, the response should be an `409 Conflict`. The entity of the response should contain a JSON document describing the reason creation was refused. See the section on error messages for more details on the format of errors.
+When a new resource is created, this should be done via an `PUT` operation. If the resource is created the server SHOULD return `201 Created`. If the resource could not be created, the response should be an `409 Conflict`. The entity of the response should contain a JSON document describing the reason creation was refused. See the section on error messages for more details on the format of errors.
 
 The client MUST generate a UUID based URL for the PUT operation.
 
