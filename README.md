@@ -336,6 +336,7 @@ Batch operations are always atomic. This is to say, the operations (creation/upd
 
 The request body of a batch operation is a composition of other operations on resources as such :
 
+    PUT /batch
     [
       {
        “href”: “/schools/{uuid-generated-by-client}”,
@@ -361,8 +362,11 @@ The request body of a batch operation is a composition of other operations on re
 
 If `verb` is omitted, it MUST be interpreted as PUT.
 
-The response body matches this same composition, and returns the http status and body (if any) the regular operations would return. A client MAY combine operations of ttype GET/PUT/DELETE in a single batch operation. The batch operation itseld MUST be a PUT operation.
+The response body matches this same composition, and returns the http status and body (if any) the regular operations would return. A client MAY combine operations of type GET/PUT/DELETE in a single batch operation. The batch operation itself MUST be a PUT operation.
 
+    PUT /batch
+    ...
+    409 Conflict
     [
      {
       “href”: “/schools/{uuid-generated-by-client}”,
@@ -376,6 +380,8 @@ The response body matches this same composition, and returns the http status and
       }
      }
     ]
+
+The HTTP status code of the response must be the highest values of the responses to the operations inside of the original batch.
 
 ## Algorithms
 Implementations can expose various algorithms as a POST operation. The input and output of such an algorithm call SHOULD be JSON documents. Besides this the server can choose the content of those documents.
