@@ -375,10 +375,13 @@ The response body matches this same composition, and returns the http status and
     [
      {
       “href”: “/schools/{uuid-generated-by-client}”,
+      "verb": "PUT"
       “status”: 200
      },
+     ...
      {
       “href”: “/schoollocations/{uuid-generated-by-client}”,
+      "verb": "PUT"
       “status”: 409,
       “body”: {
        ...
@@ -386,7 +389,7 @@ The response body matches this same composition, and returns the http status and
      }
     ]
 
-The HTTP status code of the response must be the highest values of the responses to the operations inside of the original batch.
+The HTTP status code of the response must be the highest values of the responses of the operations inside of the original batch, unless at least one `403 Forbidden` response is present in the batch response, then the server MUST respond with `403 Forbidden`.
 
 ## Algorithms
 Implementations can expose various algorithms as a POST operation. The input and output of such an algorithm call SHOULD be JSON documents. Besides this the server can choose the content of those documents.
