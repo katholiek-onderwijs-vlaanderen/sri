@@ -179,6 +179,7 @@ Every *regular* resources MUST have a UUID value to identify it in the system in
 
 The server is RECOMMENDED to store as many as possible, other, widely accepted keys for the resource he is exposing.
 
+## Handling security
 When any (list or regular) resource can not be retrieved, created or updated because of security considerations, the server MUST return with status `403 Forbidden`. It MUST NOT, in such case, provide any additional information as to why the request failed.
 
 When a batch operation has one or more operations that can not be honored due to security reasons, the server (inside the batch response) MUST return status `403 Forbidden`, and it MUST NOT provide any additional information as to why that section of the batch failed. 
