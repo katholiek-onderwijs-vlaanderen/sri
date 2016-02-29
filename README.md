@@ -367,7 +367,7 @@ The request body of a batch operation is a composition of other operations on re
 
 If `verb` is omitted, it MUST be interpreted as PUT.
 
-The response body matches this same composition, and returns the http status and body (if any) the regular operations would return. A client MAY combine operations of type GET/PUT/DELETE in a single batch operation. The batch operation itself MUST be a PUT operation.
+The response body matches this same composition, and returns the http status and body (if any) the regular operations would return. A client MAY combine operations of type GET/PUT/DELETE in a single batch operation. The batch operation itself MUST be a PUT operation, unless the entire batch is composed of GET operations, in which case the batch it's HTTP verb MUST be GET.
 
     PUT /batch
     ...
