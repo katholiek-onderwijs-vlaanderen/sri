@@ -391,6 +391,26 @@ The response body matches this same composition, and returns the http status and
 
 The HTTP status code of the response must be the highest values of the responses of the operations inside of the original batch, unless at least one `403 Forbidden` response is present in the batch response, then the server MUST respond with `403 Forbidden`.
 
+Direct operations in the batch MUST be executed in sequence. Operations that are contained inside of an array MUST BE executed in parallel.
+
+These 2 operations would be executed in parallel :
+
+    PUT /batch
+    [
+     [
+      {
+       “href”: “/schools/{uuid-generated-by-client}”,
+       "verb": "PUT"
+       “body”: { ... }
+      },
+      {
+       “href”: “/schoollocations/{uuid-generated-by-client}”,
+       "verb": "PUT"
+       “body”: { ... }
+      }
+     ]
+    ]
+
 ## Algorithms
 Implementations can expose various algorithms as a POST operation. The input and output of such an algorithm call SHOULD be JSON documents. Besides this the server can choose the content of those documents.
 
