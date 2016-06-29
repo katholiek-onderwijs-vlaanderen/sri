@@ -41,6 +41,9 @@ A regular resource should include a `$$meta` section. Such a section MUST includ
 
 - a permalink to itself, under `permalink`.
 - a link to the json schema of this resource, under `schema`.
+- a timestamp (RFC3339) `created` that stores (immutable) the server timestamp, when the resource was created.
+- a timestamp (RFC3339) `modified` that stores the last update made to the resource.
+- a timestamp (RFC3339) `deleted` that stores the server timestamp of when the resource was deleted (logical delete).
 
 It MAY also include an array of supported aliases for this resource, under `aliases`.
 Server implementations MAY choose to add extra keys to the `$$meta` section.
