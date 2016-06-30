@@ -152,7 +152,7 @@ Servers MAY also allow expansion of more information. For example the *regular* 
 
 *List* resource must all support the following standard URL parameters by default :
 
-- `modifiedSince` : Limits `results` to references to resources that were created or modified since the given timestamp. 
+- `modifiedSince` : Limits `results` to references to resources that were created, modified or deleted since the given timestamp. To also see deletes since the given timestamp, us in conjunction with `?$$meta.deleted=any`.
 - `orderBy` : Orders `results`. Servers can determine what possible ordering they support. By default the sort order is ascending.
 - `descending` : Specifies that the `orderBy` parameter should sort descending, if it’s value is true.
 - `offset` : Used for paging. The server MUST skip the first n references from the result set.
