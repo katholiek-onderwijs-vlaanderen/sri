@@ -156,7 +156,7 @@ Servers MAY also allow expansion of more information. For example the *regular* 
 - `orderBy` : Orders `results`. Servers can determine what possible ordering they support. By default the sort order is ascending.
 - `descending` : Specifies that the `orderBy` parameter should sort descending, if it’s value is true.
 - `offset` : Used for paging. The server MUST skip the first n references from the result set.
-- `limit` : Used for paging. Specifies a maximum number of results to return. The server MUST  have a maximum value for `limit`. (This limits the maximum transfer size of responses)
+- `limit` : Used for paging. Specifies a maximum number of results to return. The server MUST  have a maximum value for `limit`. (This limits the maximum transfer size of responses).
 - `hrefs` : A comma separated list of permalinks. The server MUST limit the results to these items.
 
 All URL parameters can be combined, where the filtering is combined in an `AND` fashion.
@@ -174,6 +174,8 @@ List resources must contain a `$$meta` section. This `$$meta` section MUST conta
 - `count` : indicates the total number of references that match with the supplied URL parameters.
 - `next` : If more references are available for the specified URL parameter, and the `limit` has been applied to this *list* resource, `next` MUST contain a link to the *list* resource that contains the next page. Otherwise it SHOULD be omitted.
 - `previous` : If the client specified an `offset` that is larger than `limit`, then `previous` MUST contain a link to the *list* resource that contains the previous page. Otherwise it SHOULD be omitted.
+
+The use of `limit=*` allows a client to retrieve a in one atomic operations all permalinks that are part of a specific list resource. This option CAN NOT be used in combination with expansion.
 
 ## Usage of keys
 Every *regular* resources MUST have a UUID value to identify it in the system in a reliable, stable way. This UUID MAY NEVER change over the lifetime of the resource. All UUID’s should be represented in the same way: {8 characters}-{4 characters}-{4 characters}-{4 characters}-{12 characters}, including hyphens. All characters MUST be in lower case.
