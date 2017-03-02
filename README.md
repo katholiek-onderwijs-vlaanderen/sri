@@ -177,6 +177,8 @@ List resources must contain a `$$meta` section. This `$$meta` section MUST conta
 
 The use of `limit=*` allows a client to retrieve a in one atomic operations all permalinks that are part of a specific list resource. This option CAN NOT be used in combination with expansion.
 
+The client CAN ask the server omit individual items from the $$meta section, using the URL parameter `?omit=` with a comma-separated list of property paths. For example : `?omit=$$meta.count`. The server is ADVISED to implement this behaviour.
+
 ## Usage of keys
 Every *regular* resources MUST have a UUID value to identify it in the system in a reliable, stable way. This UUID MAY NEVER change over the lifetime of the resource. All UUID’s should be represented in the same way: {8 characters}-{4 characters}-{4 characters}-{4 characters}-{12 characters}, including hyphens. All characters MUST be in lower case.
 
